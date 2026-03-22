@@ -436,16 +436,16 @@ footer {
 <!-- TABS -->
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('sim',this)">🎮 Simulador</button>
+    <button class="tab-btn active" onclick="showTab('model',this)">🔗 Modelo económico</button>
     <button class="tab-btn" onclick="showTab('strategy',this)">📋 Estrategia</button>
-    <button class="tab-btn" onclick="showTab('model',this)">🔗 Modelo económico</button>
+    <button class="tab-btn" onclick="showTab('sim',this)">🎮 Simulador</button>
   </div>
 </div>
 
 <div class="container">
 
 <!-- ══════════ TAB SIMULADOR ══════════ -->
-<div id="tab-sim" class="tab-panel active">
+<div id="tab-sim" class="tab-panel">
 
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
     <div>
@@ -692,7 +692,7 @@ footer {
 </div>
 
 <!-- ══════════ TAB MODELO ══════════ -->
-<div id="tab-model" class="tab-panel">
+<div id="tab-model" class="tab-panel active">
 
   <div class="section-heading">Modelo económico</div>
   <div class="section-sub">16 variables en total — tú controlas 4. Así se conectan.</div>

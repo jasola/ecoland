@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Econland — Guía & Simulador</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#e8ecf4;--text2:#8b95a8;--text3:#5a6272;--accent:#4f9cf9;--accent2:#7c5cbf;--green:#22c985;--red:#f05252;--amber:#f59e0b;--purple:#a78bfa;--teal:#2dd4bf;--coral:#fb7185}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;padding:80px 24px;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(79,156,249,0.12) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 80% 80%,rgba(124,92,191,0.1) 0%,transparent 60%),var(--bg)}
+.hero::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,0.025) 39px,rgba(255,255,255,0.025) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,0.025) 39px,rgba(255,255,255,0.025) 40px);pointer-events:none}
+.hero-tag{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;border:1px solid rgba(79,156,249,.3);padding:5px 14px;border-radius:20px;margin-bottom:28px;background:rgba(79,156,249,.06);animation:fadeup .6s ease both}
+.hero h1{font-size:clamp(52px,10vw,96px);font-weight:800;line-height:.95;letter-spacing:-.03em;margin-bottom:20px;animation:fadeup .7s .1s ease both}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:18px;color:var(--text2);max-width:540px;line-height:1.6;margin-bottom:40px;font-weight:400;animation:fadeup .7s .2s ease both}
+.hero-pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:48px;animation:fadeup .7s .3s ease both}
+.pill{background:var(--bg3);border:1px solid var(--border2);border-radius:100px;padding:7px 16px;font-size:13px;color:var(--text2)}
+.pill b{color:var(--text)}
+.hero-nav{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fadeup .7s .4s ease both}
+.btn{padding:12px 26px;border-radius:10px;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:.2s;text-decoration:none;display:inline-block}
+.btn-primary{background:var(--accent);color:#000}.btn-primary:hover{background:#6badff;transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border2)}.btn-outline:hover{background:var(--bg3)}
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,14,26,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-weight:800;font-size:18px;letter-spacing:-.02em}.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:8px}
+.nav-link{font-size:13px;color:var(--text2);padding:6px 14px;border-radius:8px;text-decoration:none;transition:.2s;font-weight:500}.nav-link:hover{color:var(--text);background:var(--bg3)}
+.section{max-width:1100px;margin:0 auto;padding:80px 24px}
+.section-header{margin-bottom:48px}
+.section-tag{font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;display:block}
+.section-title{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.section-sub{font-size:16px;color:var(--text2);margin-top:12px;line-height:1.6;max-width:600px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px}
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:32px}
+.concept-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;transition:.2s}.concept-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.concept-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px}
+.concept-card h3{font-size:15px;font-weight:700;margin-bottom:6px}.concept-card p{font-size:13px;color:var(--text2);line-height:1.55}
+.arrow-flow{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3);margin-top:10px;flex-wrap:wrap}
+.af-item{background:var(--bg3);border:1px solid var(--border);padding:3px 10px;border-radius:20px;font-size:11px;font-family:'Space Mono',monospace}
+.af-arrow{color:var(--text3);font-size:14px}.af-up{color:var(--green)}.af-down{color:var(--red)}
+.strat-section{margin-bottom:40px}
+.strat-section h3{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.strat-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;font-family:'Space Mono',monospace}
+.badge-monetary{background:rgba(79,156,249,.15);color:var(--accent)}.badge-fiscal{background:rgba(34,201,133,.15);color:var(--green)}
+.strat-table{width:100%;border-collapse:collapse}
+.strat-table th{text-align:left;font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--border)}
+.strat-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}
+.strat-table tr:last-child td{border-bottom:none}.strat-table tr:hover td{background:rgba(255,255,255,.02)}
+td.cond{color:var(--text);font-weight:500}td.action-up{color:var(--green)}td.action-down{color:var(--red)}td.action-hold{color:var(--amber)}td.reason{color:var(--text2)}
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.rule-card{background:rgba(79,156,249,.05);border:1px solid rgba(79,156,249,.15);border-radius:12px;padding:16px;display:flex;gap:14px;align-items:flex-start}
+.rule-num{font-size:24px;font-weight:800;color:rgba(79,156,249,.3);line-height:1;min-width:28px}
+.rule-text{font-size:13px;color:var(--text2);line-height:1.55}.rule-text b{color:var(--text);font-weight:600}
+.mult-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mult-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px}
+.mult-card h4{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--text2)}
+.mult-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}.mult-row:last-child{border-bottom:none}
+.mult-val{font-family:'Space Mono',monospace;font-weight:700;font-size:16px}
+.mult-low{color:var(--text2)}.mult-mid{color:var(--amber)}.mult-high{color:var(--green)}
+.sim-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:20px;align-items:start}
+.sim-controls{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;position:sticky;top:76px}
+.sim-controls h3{font-size:16px;font-weight:700;margin-bottom:20px}
+.ctrl-group{margin-bottom:20px}
+.ctrl-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px}
+.ctrl-label span:last-child{font-family:'Space Mono',monospace;font-weight:700;color:var(--text);font-size:13px}
+input[type=range]{width:100%;height:4px;-webkit-appearance:none;appearance:none;background:var(--bg3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--border)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg2)}
+input[type=range]:hover::-webkit-slider-thumb{background:#6badff}
+.sim-results{display:flex;flex-direction:column;gap:16px}
+.year-header{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 20px}
+.year-label{font-size:13px;color:var(--text2)}.year-val{font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-.02em}
+.context-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13px;color:var(--text2);line-height:1.6}
+.context-box b{color:var(--text)}
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.metric-card .label{font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.metric-card .value{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.metric-card .sub{font-size:11px;color:var(--text2)}
+.meter{height:4px;background:var(--bg3);border-radius:2px;margin-top:8px;overflow:hidden}
+.meter-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.sat-card{background:linear-gradient(135deg,rgba(79,156,249,.1),rgba(124,92,191,.1));border:1px solid rgba(79,156,249,.2);border-radius:14px;padding:20px}
+.sat-card .label{font-size:12px;color:var(--text2);margin-bottom:8px}
+.sat-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.sat-val{font-size:36px;font-weight:800;letter-spacing:-.03em}
+.sat-bar{height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.sat-fill{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,var(--accent),var(--purple))}
+.advice-area{display:flex;flex-direction:column;gap:8px}
+.advice{padding:10px 14px;border-radius:10px;font-size:12px;line-height:1.5;border-left:3px solid}
+.adv-ok{background:rgba(34,201,133,.08);border-color:var(--green);color:#7de8b8}
+.adv-warn{background:rgba(245,158,11,.08);border-color:var(--amber);color:#fcd16a}
+.adv-bad{background:rgba(240,82,82,.08);border-color:var(--red);color:#f9a0a0}
+.history-table{width:100%;border-collapse:collapse;font-size:12px}
+.history-table th{text-align:left;color:var(--text3);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--border);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.history-table td{padding:8px 10px;color:var(--text2);border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:11px}
+.history-table tr:last-child td{border-bottom:none}.history-table .sat-cell{color:var(--accent);font-weight:700}
+.btn-confirm{width:100%;padding:13px;background:var(--accent);color:#000;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:10px;cursor:pointer;transition:.2s;margin-top:4px}
+.btn-confirm:hover{background:#6badff;transform:translateY(-1px)}.btn-confirm:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed;transform:none}
+.btn-reset{width:100%;padding:10px;background:transparent;color:var(--text2);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:.2s;margin-top:8px}
+.btn-reset:hover{background:var(--bg3);color:var(--text)}
+footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;font-size:12px;color:var(--text3)}
+footer b{color:var(--text2)}
+.section-divider{border:none;border-top:1px solid var(--border);margin:0}
+@keyframes fadeup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){.sim-layout{grid-template-columns:1fr}.sim-controls{position:static}.mult-grid{grid-template-columns:1fr}.top-nav{padding:0 16px}.nav-links{display:none}}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-logo">Econ<span>land</span></div>
+  <div class="nav-links">
+    <a href="#conceptos" class="nav-link">Conceptos</a>
+    <a href="#estrategia" class="nav-link">Estrategia</a>
+    <a href="#simulador" class="nav-link">Simulador</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">Programa Pymex Sevilla 2025–2026 · DTI-937-HP</div>
+  <h1>Gobierna<br><span>Econland</span></h1>
+  <p class="hero-sub">Guía completa y simulador interactivo para la simulación macroeconómica de Harvard Business Publishing. Aprende, practica y llega preparado.</p>
+  <div class="hero-pills">
+    <div class="pill"><b>7 años</b> de mandato</div>
+    <div class="pill"><b>4 palancas</b> de política económica</div>
+    <div class="pill"><b>16 variables</b> en el modelo</div>
+    <div class="pill">Objetivo: <b>máxima satisfacción</b></div>
+  </div>
+  <div class="hero-nav">
+    <a href="#conceptos" class="btn btn-primary">Explorar guía</a>
+    <a href="#simulador" class="btn btn-outline">Ir al simulador</a>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section class="section" id="conceptos">
+  <div class="section-header">
+    <span class="section-tag">01 — Modelo económico</span>
+    <h2 class="section-title">Cómo funciona Econland</h2>
+    <p class="section-sub">Controlas 4 variables. Cada decisión mueve una cadena de efectos que determina la felicidad de los ciudadanos al final de tu mandato.</p>
+  </div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(79,156,249,.15)">📊</div>
+      <h3 style="color:var(--accent)">PIB / Crecimiento</h3>
+      <p>El indicador central. Mide el valor total de bienes y servicios producidos. Crece cuando sube el consumo, la inversión, el gasto público o las exportaciones.</p>
+      <div class="arrow-flow"><span class="af-item">Consumo</span><span class="af-arrow">→</span><span class="af-item">Inversión</span><span class="af-arrow">→</span><span class="af-item af-up">PIB ↑</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(251,113,133,.15)">👥</div>
+      <h3 style="color:var(--coral)">Desempleo</h3>
+      <p>Cae cuando el PIB crece. Es clave para la satisfacción ciudadana. También activa los multiplicadores fiscales: a mayor desempleo, mayor efecto de tus estímulos.</p>
+      <div class="arrow-flow"><span class="af-item af-up">PIB ↑</span><span class="af-arrow">→</span><span class="af-item af-down">Paro ↓</span><span class="af-arrow">→</span><span class="af-item af-up">Satisfacción ↑</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(245,158,11,.15)">💰</div>
+      <h3 style="color:var(--amber)">Inflación</h3>
+      <p>Objetivo: mantenerla cerca del 2%. La deflación desestabiliza la economía. La inflación alta erosiona el poder adquisitivo de los ciudadanos.</p>
+      <div class="arrow-flow"><span class="af-item">Tipos ↑</span><span class="af-arrow">→</span><span class="af-item af-down">Inflación ↓</span><span class="af-arrow">·</span><span class="af-item">Tipos ↓</span><span class="af-arrow">→</span><span class="af-item af-up">Inflación ↑</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(167,139,250,.15)">📉</div>
+      <h3 style="color:var(--purple)">Déficit público</h3>
+      <p>Gasto del estado menos ingresos fiscales. Un déficit alto encarece la deuda pública y fuerza subidas de impuestos futuras.</p>
+      <div class="arrow-flow"><span class="af-item af-up">Gasto ↑</span><span class="af-arrow">→</span><span class="af-item af-up">Déficit ↑</span><span class="af-arrow">·</span><span class="af-item af-up">Impuestos ↑</span><span class="af-arrow">→</span><span class="af-item af-down">Déficit ↓</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(45,212,191,.15)">🏭</div>
+      <h3 style="color:var(--teal)">Productividad</h3>
+      <p>Mejora con la inversión empresarial. Reduce inflación y aumenta el potencial de crecimiento. Se incentiva bajando el impuesto de empresas.</p>
+      <div class="arrow-flow"><span class="af-item">Imp. empresa ↓</span><span class="af-arrow">→</span><span class="af-item af-up">Inversión ↑</span><span class="af-arrow">→</span><span class="af-item af-up">Productividad ↑</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(34,201,133,.15)">🌍</div>
+      <h3 style="color:var(--green)">Economía mundial</h3>
+      <p>Econland exporta ~25% de su PIB. El crecimiento mundial afecta exportaciones y confianza del consumidor. No puedes controlarlo, solo adaptarte.</p>
+      <div class="arrow-flow"><span class="af-item af-up">Mundo ↑</span><span class="af-arrow">→</span><span class="af-item af-up">Exportaciones ↑</span><span class="af-arrow">→</span><span class="af-item af-up">PIB ↑</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:6px">Multiplicadores fiscales (FMI)</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:20px">El impacto de tus políticas fiscales varía según el nivel de desempleo. A mayor desempleo, mayor efecto de cada euro gastado o impuesto reducido.</p>
+    <div class="mult-grid">
+      <div class="mult-card">
+        <h4>Multiplicador del Gasto Público</h4>
+        <div class="mult-row"><span style="color:var(--text2)">Desempleo &lt; 5%</span><span class="mult-val mult-low">× 1.0</span></div>
+        <div class="mult-row"><span style="color:var(--text2)">Desempleo 5% – 8%</span><span class="mult-val mult-mid">× 1.5</span></div>
+        <div class="mult-row"><span style="color:var(--text2)">Desempleo &gt; 8%</span><span class="mult-val mult-high">× 1.8</span></div>
+      </div>
+      <div class="mult-card">
+        <h4>Multiplicador del Impuesto Renta</h4>
+        <div class="mult-row"><span style="color:var(--text2)">Desempleo &lt; 5%</span><span class="mult-val mult-low">× 1.0</span></div>
+        <div class="mult-row"><span style="color:var(--text2)">Desempleo 5% – 8%</span><span class="mult-val mult-mid">× 1.5</span></div>
+        <div class="mult-row"><span style="color:var(--text2)">Desempleo &gt; 8%</span><span class="mult-val mult-high">× 1.8</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section class="section" id="estrategia">
+  <div class="section-header">
+    <span class="section-tag">02 — Guía estratégica</span>
+    <h2 class="section-title">Qué hacer y cuándo</h2>
+    <p class="section-sub">Decisiones óptimas para cada situación. Úsalo como referencia antes y durante la simulación.</p>
+  </div>
+  <div class="strat-section">
+    <h3>Tipos de interés <span class="strat-badge badge-monetary">Política monetaria</span></h3>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="strat-table">
+        <thead><tr><th>Si ves...</th><th>Decisión</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td class="cond">Inflación &gt; 3%</td><td class="action-up">↑ Subir tipos</td><td class="reason">Enfría precios, reduce consumo e inversión</td></tr>
+          <tr><td class="cond">Inflación &lt; 1% o deflación</td><td class="action-down">↓ Bajar tipos</td><td class="reason">Estimula consumo, inversión y crédito</td></tr>
+          <tr><td class="cond">Inflación ≈ 2%</td><td class="action-hold">→ Mantener</td><td class="reason">Es el objetivo ideal del banco central</td></tr>
+          <tr><td class="cond">Economía mundial débil</td><td class="action-down">↓ Bajar tipos</td><td class="reason">Compensa la caída de exportaciones</td></tr>
+          <tr><td class="cond">Recesión (PIB &lt; 0)</td><td class="action-down">↓ Bajar al mínimo</td><td class="reason">Máximo estímulo monetario posible</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="strat-section">
+    <h3>Impuesto renta (IRPF) <span class="strat-badge badge-fiscal">Política fiscal</span></h3>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="strat-table">
+        <thead><tr><th>Si ves...</th><th>Decisión</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td class="cond">Desempleo alto (&gt; 8%)</td><td class="action-down">↓ Bajar impuesto</td><td class="reason">Más renta disponible → consumo → PIB (multiplicador x1.8)</td></tr>
+          <tr><td class="cond">Déficit &gt; 5% PIB</td><td class="action-up">↑ Subir impuesto</td><td class="reason">Más ingresos al Estado para reducir el déficit</td></tr>
+          <tr><td class="cond">Inflación alta (&gt; 3.5%)</td><td class="action-up">↑ Subir impuesto</td><td class="reason">Reduce la demanda agregada y enfría precios</td></tr>
+          <tr><td class="cond">Estancamiento + inflación baja</td><td class="action-down">↓ Bajar impuesto</td><td class="reason">Estímulo fiscal al consumo de las familias</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="strat-section">
+    <h3>Impuesto empresas <span class="strat-badge badge-fiscal">Política fiscal</span></h3>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="strat-table">
+        <thead><tr><th>Si ves...</th><th>Decisión</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td class="cond">Productividad estancada</td><td class="action-down">↓ Bajar impuesto</td><td class="reason">Incentiva inversión → productividad a largo plazo</td></tr>
+          <tr><td class="cond">Déficit muy alto</td><td class="action-up">↑ Subir impuesto</td><td class="reason">Mejora los ingresos del Estado</td></tr>
+          <tr><td class="cond">Crecimiento fuerte</td><td class="action-hold">→ Mantener</td><td class="reason">No interrumpas lo que está funcionando</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="strat-section">
+    <h3>Gasto público <span class="strat-badge badge-fiscal">Política fiscal</span></h3>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="strat-table">
+        <thead><tr><th>Si ves...</th><th>Decisión</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td class="cond">Desempleo alto + espacio fiscal</td><td class="action-up">↑ Subir gasto</td><td class="reason">Multiplicador x1.8 — máximo impacto en PIB y empleo</td></tr>
+          <tr><td class="cond">Déficit &gt; 5% del PIB</td><td class="action-down">↓ Reducir gasto</td><td class="reason">La deuda encadena la economía a largo plazo</td></tr>
+          <tr><td class="cond">Economía sobrecalentada</td><td class="action-down">↓ Reducir gasto</td><td class="reason">Evita que la inflación se dispare</td></tr>
+          <tr><td class="cond">Recesión inminente</td><td class="action-up">↑ Subir gasto</td><td class="reason">Colchón anticíclico — política keynesiana</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div>
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">Las 5 reglas de oro</h3>
+    <div class="rules-grid">
+      <div class="rule-card"><span class="rule-num">1</span><p class="rule-text"><b>Mantén la inflación cerca del 2%.</b> Es la referencia del banco central. Ni deflación ni sobrecalentamiento.</p></div>
+      <div class="rule-card"><span class="rule-num">2</span><p class="rule-text"><b>Las decisiones tienen inercia.</b> Un cambio brusco hoy afecta 2–3 años. Sé gradual y consistente.</p></div>
+      <div class="rule-card"><span class="rule-num">3</span><p class="rule-text"><b>No sacrifiques el largo plazo.</b> Un déficit alto ahora = más impuestos obligatorios después.</p></div>
+      <div class="rule-card"><span class="rule-num">4</span><p class="rule-text"><b>Usa el multiplicador a tu favor.</b> Con paro alto, cada euro en gasto o bajada de impuestos vale x1.8.</p></div>
+      <div class="rule-card"><span class="rule-num">5</span><p class="rule-text"><b>Vigila el contexto mundial.</b> Si el mundo va mal, estimula la demanda interna para compensar exportaciones.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section class="section" id="simulador">
+  <div class="section-header">
+    <span class="section-tag">03 — Simulador</span>
+    <h2 class="section-title">Practica los 7 años</h2>
+    <p class="section-sub">Ajusta las 4 palancas, confirma cada año y observa cómo evoluciona tu economía. Llega preparado a la plataforma de Harvard.</p>
+  </div>
+  <div class="sim-layout">
+    <div class="sim-controls">
+      <h3>Tus decisiones</h3>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span>Tipos de interés</span><span id="v-rate">3.0%</span></div>
+        <input type="range" id="c-rate" min="0" max="7" step="0.5" value="3" oninput="updateSim()">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span>Impuesto renta (IRPF)</span><span id="v-itax">24%</span></div>
+        <input type="range" id="c-itax" min="10" max="50" step="1" value="24" oninput="updateSim()">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span>Impuesto empresas</span><span id="v-ctax">30%</span></div>
+        <input type="range" id="c-ctax" min="10" max="50" step="1" value="30" oninput="updateSim()">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span>Gasto público</span><span id="v-spend">$30B</span></div>
+        <input type="range" id="c-spend" min="10" max="60" step="1" value="30" oninput="updateSim()">
+      </div>
+      <button class="btn-confirm" id="btn-confirm" onclick="confirmYear()">✓ Confirmar año y avanzar</button>
+      <button class="btn-reset" onclick="resetSim()">↺ Reiniciar simulación</button>
+    </div>
+    <div class="sim-results">
+      <div class="year-header">
+        <div><div class="year-label">Año en curso</div><div class="year-val" id="year-badge">Año 1 de 7</div></div>
+        <div style="text-align:right"><div class="year-label">Satisfacción acumulada</div><div id="avg-display" style="font-size:22px;font-weight:800;color:var(--purple)">—</div></div>
+      </div>
+      <div class="context-box" id="context-text"></div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="label">Crecimiento PIB</div><div class="value" id="r-gdp" style="color:var(--green)">—</div><div class="sub" id="s-gdp"></div><div class="meter"><div class="meter-fill" id="m-gdp" style="background:var(--green)"></div></div></div>
+        <div class="metric-card"><div class="label">Desempleo</div><div class="value" id="r-unemp" style="color:var(--coral)">—</div><div class="sub" id="s-unemp"></div><div class="meter"><div class="meter-fill" id="m-unemp" style="background:var(--coral)"></div></div></div>
+        <div class="metric-card"><div class="label">Inflación</div><div class="value" id="r-inf" style="color:var(--amber)">—</div><div class="sub" id="s-inf"></div><div class="meter"><div class="meter-fill" id="m-inf" style="background:var(--amber)"></div></div></div>
+        <div class="metric-card"><div class="label">Déficit / Superávit</div><div class="value" id="r-def" style="color:var(--purple)">—</div><div class="sub" id="s-def"></div><div class="meter"><div class="meter-fill" id="m-def" style="background:var(--purple)"></div></div></div>
+      </div>
+      <div class="sat-card">
+        <div class="label">Aprobación ciudadana este año</div>
+        <div class="sat-row"><div class="sat-val" id="r-sat">—</div><div style="font-size:13px;color:var(--text2)" id="s-sat"></div></div>
+        <div class="sat-bar"><div class="sat-fill" id="m-sat"></div></div>
+      </div>
+      <div class="advice-area" id="advice-box"></div>
+      <div class="card">
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text2);letter-spacing:.04em;text-transform:uppercase">Historial</h4>
+        <table class="history-table">
+          <thead><tr><th>Año</th><th>PIB</th><th>Paro</th><th>Infl.</th><th>Déficit</th><th>Aprobación</th></tr></thead>
+          <tbody id="history-list"><tr><td colspan="6" style="color:var(--text3);font-family:'Syne',sans-serif">Sin años confirmados aún.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<footer>
+  <p>Guía no oficial · <b>Programa Pymex Sevilla 2025–2026</b> · DTI-937-HP</p>
+  <p style="margin-top:6px">Basada en el documento del profesor Manuel J. Aguilera · Simulación original: Harvard Business Publishing</p>
+</footer>
+
+<script>
+const SCENARIOS=[{world:2.4,label:"Punto de partida sólido. Economía mundial moderada.",conf:100},{world:2.8,label:"Buen año mundial — exportaciones al alza.",conf:102},{world:1.6,label:"Ligera desaceleración global. Cuida el consumo.",conf:99},{world:1.0,label:"Año débil mundialmente. Estimula la demanda interna.",conf:98},{world:1.3,label:"Recuperación internacional incipiente.",conf:100},{world:2.0,label:"Mundo en recuperación. Momento de consolidar.",conf:101},{world:2.4,label:"Cierre de ciclo con crecimiento mundial estable.",conf:103}];
+let state={year:1,gdp:2.5,unemp:5.0,inf:2.0,deficit:-3.0,history:[],satTotal:0};
+function fmt(v,d=1){return v.toFixed(d)}
+function calcResults(s,r){
+  const ir=parseFloat(r.rate),it=parseFloat(r.itax),ct=parseFloat(r.ctax),sp=parseFloat(r.spend);
+  const sc=SCENARIOS[s.year-1],mult=s.unemp<5?1.0:s.unemp<8?1.5:1.8;
+  let newGdp=s.gdp+(sc.world-2.0)*0.4+(sc.conf/100-1)*0.8-(ir-3)*0.3-(it-24)*0.04*mult-(ct-30)*0.025+(sp-30)/30*1.2*mult;
+  newGdp=Math.min(5.5,Math.max(-2.0,newGdp));
+  let newInf=s.inf+(ir<3?(3-ir)*0.2:-(ir-3)*0.25)+(sp>35?(sp-35)*0.02:0)+(newGdp>3.5?0.3:newGdp<0?-0.4:0);
+  newInf=Math.min(6.0,Math.max(-1.0,newInf));
+  let newUnemp=Math.min(15,Math.max(2.5,s.unemp+(newGdp>2.5?-0.4:newGdp<1.0?0.6:0.0)));
+  let newDef=Math.max(-8,Math.min(3,s.deficit-(sp-30)*0.08+((it-20)*0.3+(ct-25)*0.2)*0.3+(newGdp>0?newGdp*0.2:newGdp*0.3)));
+  let sat=50+Math.min(20,Math.max(-20,(newGdp-1.5)*8))+Math.min(15,Math.max(-15,(6-newUnemp)*2.5))+Math.min(10,Math.max(-15,(2-Math.abs(newInf-2))*5))+Math.min(5,Math.max(-10,(-newDef)*1.2));
+  return{gdp:newGdp,inf:newInf,unemp:newUnemp,def:newDef,sat:Math.round(Math.min(95,Math.max(20,sat)))};
+}
+function getControls(){return{rate:document.getElementById('c-rate').value,itax:document.getElementById('c-itax').value,ctax:document.getElementById('c-ctax').value,spend:document.getElementById('c-spend').value}}
+function updateSim(){
+  const r=getControls();
+  document.getElementById('v-rate').textContent=parseFloat(r.rate).toFixed(1)+'%';
+  document.getElementById('v-itax').textContent=r.itax+'%';
+  document.getElementById('v-ctax').textContent=r.ctax+'%';
+  document.getElementById('v-spend').textContent='$'+r.spend+'B';
+  const res=calcResults(state,r);
+  document.getElementById('r-gdp').textContent=fmt(res.gdp)+'%';
+  document.getElementById('m-gdp').style.width=Math.max(0,Math.min(100,(res.gdp+2)/7.5*100))+'%';
+  document.getElementById('s-gdp').textContent=res.gdp>=2.5?'Buen crecimiento':res.gdp>=1?'Crecimiento moderado':res.gdp<0?'Recesión':'Crecimiento débil';
+  document.getElementById('r-unemp').textContent=fmt(res.unemp)+'%';
+  document.getElementById('m-unemp').style.width=Math.min(100,res.unemp/15*100)+'%';
+  document.getElementById('s-unemp').textContent=res.unemp<5?'Pleno empleo':res.unemp<8?'Desempleo moderado':'Alto — multiplicador x1.8 activo';
+  document.getElementById('r-inf').textContent=fmt(res.inf)+'%';
+  document.getElementById('m-inf').style.width=Math.min(100,Math.max(0,(res.inf+1)/7*100))+'%';
+  document.getElementById('s-inf').textContent=res.inf<0?'⚠ Deflación':res.inf<1.5?'Baja — espacio para estimular':res.inf<=3?'Controlada ✓':'⚠ Sobrecalentamiento';
+  document.getElementById('r-def').textContent=(res.def>=0?'+':'')+fmt(res.def)+'%';
+  document.getElementById('m-def').style.width=Math.min(100,Math.max(0,(res.def+8)/11*100))+'%';
+  document.getElementById('s-def').textContent=res.def>1?'Superávit':res.def>-3?'Controlado':res.def>-5?'Elevado — vigila':'⚠ Peligroso';
+  document.getElementById('r-sat').textContent=res.sat+' pts';
+  document.getElementById('m-sat').style.width=res.sat+'%';
+  document.getElementById('s-sat').textContent=res.sat>=70?'Ciudadanos contentos':res.sat>=55?'Aprobación media':'Aprobación baja';
+  const advs=[];
+  if(res.inf>3.5)advs.push({cls:'adv-bad',msg:'⚠ Inflación alta: sube tipos de interés para enfriarla.'});
+  if(res.inf<0.5)advs.push({cls:'adv-warn',msg:'⚠ Riesgo de deflación: baja tipos y estimula la demanda.'});
+  if(res.unemp>8)advs.push({cls:'adv-warn',msg:'Desempleo alto: multiplicador x1.8 activo — baja impuestos o sube gasto.'});
+  if(res.def<-5)advs.push({cls:'adv-bad',msg:'⚠ Déficit peligroso: reduce gasto o sube impuestos.'});
+  if(res.gdp>=2&&res.inf<=3&&res.unemp<6&&res.def>-4)advs.push({cls:'adv-ok',msg:'✓ Buen equilibrio: crecimiento, empleo e inflación dentro de objetivos.'});
+  document.getElementById('advice-box').innerHTML=advs.map(a=>`<div class="advice ${a.cls}">${a.msg}</div>`).join('')||'<div class="advice adv-ok">Sin alertas destacadas con estas decisiones.</div>';
+}
+function confirmYear(){
+  if(state.year>7)return;
+  const r=getControls(),res=calcResults(state,r);
+  state.history.push({year:state.year,...res});
+  state.satTotal+=res.sat;
+  state.gdp=res.gdp;state.unemp=res.unemp;state.inf=res.inf;state.deficit=res.def;
+  document.getElementById('avg-display').textContent=Math.round(state.satTotal/state.history.length)+' pts';
+  document.getElementById('history-list').innerHTML=state.history.map(h=>`<tr><td>${h.year}</td><td>${fmt(h.gdp)}%</td><td>${fmt(h.unemp)}%</td><td>${fmt(h.inf)}%</td><td>${fmt(h.def)}%</td><td class="sat-cell">${h.sat}</td></tr>`).join('');
+  if(state.year<7){state.year++;document.getElementById('year-badge').textContent='Año '+state.year+' de 7';updateContext();updateSim();}
+  else{document.getElementById('year-badge').textContent='✓ Completado';document.getElementById('btn-confirm').disabled=true;document.getElementById('btn-confirm').textContent='7/7 años completados';}
+}
+function updateContext(){
+  const sc=SCENARIOS[state.year-1];
+  document.getElementById('context-text').innerHTML=`Año anterior — PIB: <b>${fmt(state.gdp)}%</b> · Paro: <b>${fmt(state.unemp)}%</b> · Inflación: <b>${fmt(state.inf)}%</b> · Déficit: <b>${fmt(state.deficit)}%</b><br>Previsión crecimiento mundial: <b>${sc.world}%</b> · ${sc.label}`;
+}
+function resetSim(){
+  state={year:1,gdp:2.5,unemp:5.0,inf:2.0,deficit:-3.0,history:[],satTotal:0};
+  document.getElementById('c-rate').value=3;document.getElementById('c-itax').value=24;document.getElementById('c-ctax').value=30;document.getElementById('c-spend').value=30;
+  document.getElementById('history-list').innerHTML='<tr><td colspan="6" style="color:var(--text3);font-family:\'Syne\',sans-serif">Sin años confirmados aún.</td></tr>';
+  document.getElementById('avg-display').textContent='—';
+  document.getElementById('year-badge').textContent='Año 1 de 7';
+  document.getElementById('btn-confirm').disabled=false;
+  document.getElementById('btn-confirm').textContent='✓ Confirmar año y avanzar';
+  updateContext();updateSim();
+}
+updateContext();updateSim();
+</script>
+</body>
+</html>
